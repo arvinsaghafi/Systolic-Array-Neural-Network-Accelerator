@@ -56,42 +56,39 @@ module tb_sanna;
 		for (i = 0; i < ROWS; i++) memory_data_in[i] = 0;
 		for (i = 0; i < COLS; i++) top_in_sum[i] = 0;
 		
-		#15;
+		// Deassert reset away from the active clock edge.
+		repeat(2) @(negedge clk);
 		rst = 1;
-		#5;
 		
 		// Load weights
 		$display("[Time %0t], start weight load (First 4x4 tile)", $time);
-		ld_w = 1;
-		
 		for (k = 3; k >= 0; k--) begin
+			@(negedge clk);
+			ld_w = 1;
 			memory_data_in[0] = ram_weights[k + 0];
 			memory_data_in[1] = ram_weights[k + 4];
 			memory_data_in[2] = ram_weights[k + 8];
 			memory_data_in[3] = ram_weights[k + 12];
-		
-			@(posedge clk); 
-			#1;
 		end
 		
-		for (i = 0; i < ROWS; i++) memory_data_in[i] = 0;
-		repeat(4) @(posedge clk);
-
+		// Stop loading before the next rising edge. Additional load cycles would
+		// shift zeros into the PE weight registers and overwrite valid weights.
+		@(negedge clk);
 		ld_w = 0;
+		for (i = 0; i < ROWS; i++) memory_data_in[i] = 0;
 		$display("[Time %0t], weights loaded", $time);
 		
 		// Compute
 		$display("[Time %0t], start compute", $time);
 		for (k = 0; k < 4; k++) begin
+			@(negedge clk);
 			memory_data_in[0] = ram_image[k + 0];
 			memory_data_in[1] = ram_image[k + 4];
 			memory_data_in[2] = ram_image[k + 8];
 			memory_data_in[3] = ram_image[k + 12];
-			
-			@(posedge clk)
-			#1;
 		end
 		
+		@(negedge clk);
 		for (i = 0; i < ROWS; i++) memory_data_in[i] = 0;
 		repeat(15) @(posedge clk);
 		$display("[Time %0t], start compute", $time);
