@@ -34,7 +34,10 @@ module sanna #(
 
 	// Track each input vector as it moves through the systolic array.
 	always_ff @(posedge clk or negedge rst) begin
-		if (!rst || ld_w) begin
+		if (!rst) begin
+			valid_pipe <= '0;
+		end
+		else if (ld_w) begin
 			valid_pipe <= '0;
 		end
 		else begin

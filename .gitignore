@@ -4,3 +4,11 @@ __pycache__/
 *.vcd
 work/
 transcript
+
+db/
+incremental_db/
+output_files/
+simulation/
+*.qws
+*.qdf
+*.smsg
