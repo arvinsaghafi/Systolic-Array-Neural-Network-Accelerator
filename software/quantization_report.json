@@ -1,0 +1,18 @@
+{
+  "seed": 0,
+  "epochs": 1,
+  "training_images": 60000,
+  "test_images": 10000,
+  "fp32_test_accuracy_percent": 89.08,
+  "int8_weight_quantized_test_accuracy_percent": 89.15,
+  "accuracy_change_percentage_points": 0.07000000000000739,
+  "fc1_weight_count": 50176,
+  "fc2_weight_count": 640,
+  "total_weight_count": 50816,
+  "fp32_weight_bytes": 203264,
+  "int8_weight_bytes": 50816,
+  "weight_memory_reduction_percent": 75.0,
+  "fc1_scale": 0.0009858070865390808,
+  "fc2_scale": 0.0027638910792944,
+  "test_image_label": 7
+}
