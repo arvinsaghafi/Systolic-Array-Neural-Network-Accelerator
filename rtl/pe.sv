@@ -1,3 +1,5 @@
+`timescale 1ns/1ps
+
 module pe #(
 	parameter WIDTH = 8,	  // Width of input data (INT8)
 	parameter A_WIDTH = 32 // Width of accumulator
@@ -19,8 +21,10 @@ module pe #(
 
 	logic signed [WIDTH-1:0] w_reg;
 	logic signed [(2*WIDTH)-1:0] product;
+	logic signed [A_WIDTH-1:0] product_extended;
 	
 	assign product = x_in * w_reg;
+	assign product_extended = {{(A_WIDTH-(2*WIDTH)){product[(2*WIDTH)-1]}}, product};
 	
 	always_ff @(posedge clk or negedge rst) begin
 		if (!rst) begin
@@ -36,7 +40,7 @@ module pe #(
 			end
 			else begin
 			x_out <= x_in;
-			y_out <= y_in + product;
+			y_out <= y_in + product_extended;
 			end
 		end
 	end

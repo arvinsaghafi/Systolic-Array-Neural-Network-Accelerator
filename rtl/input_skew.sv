@@ -1,20 +1,22 @@
+`timescale 1ns/1ps
+
 module input_skew #(
 	parameter ROWS  = 4,
 	parameter WIDTH = 8
 )(
 	input  logic clk,
 	input  logic rst,
-	input  logic signed [WIDTH-1:0] flat_data_in    [0:ROWS-1],
+	input  var logic signed [WIDTH-1:0] flat_data_in [0:ROWS-1],
 	output logic signed [WIDTH-1:0] skewed_data_out [0:ROWS-1]
 );
 
 	genvar i;
 	generate
 		for (i = 0; i < ROWS; i++) begin: row_delay_gen
-			if (i == 0) begin
+			if (i == 0) begin: no_delay
 				assign skewed_data_out[0] = flat_data_in[0];
 			end
-			else begin
+			else begin: with_delay
 				logic signed [WIDTH-1:0] delay_chain [0:i-1];
 				
 				always_ff @(posedge clk or negedge rst) begin

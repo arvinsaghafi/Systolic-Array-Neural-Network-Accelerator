@@ -1,3 +1,5 @@
+`timescale 1ns/1ps
+
 module systolic_array #(
 	parameter ROWS    = 4,
 	parameter COLS    = 4,
@@ -7,8 +9,8 @@ module systolic_array #(
 	input  logic clk,
 	input  logic rst,
 	input  logic ld_w,
-	input  logic signed [WIDTH-1:0]   input_x  [0:ROWS-1],
-	input  logic signed [A_WIDTH-1:0] input_y  [0:COLS-1],
+	input  var logic signed [WIDTH-1:0]   input_x  [0:ROWS-1],
+	input  var logic signed [A_WIDTH-1:0] input_y  [0:COLS-1],
 	output logic signed [A_WIDTH-1:0] output_y [0:COLS-1]
 );
 
