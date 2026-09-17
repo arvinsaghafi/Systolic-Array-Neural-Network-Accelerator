@@ -1,0 +1,6 @@
+software/data/
+__pycache__/
+*.py[cod]
+*.vcd
+work/
+transcript

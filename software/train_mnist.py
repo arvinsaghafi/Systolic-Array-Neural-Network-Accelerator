@@ -3,7 +3,10 @@ import torch.nn as nn
 import torch.optim as optim
 from torchvision import datasets, transforms
 import numpy as np
-import os
+from pathlib import Path
+
+SOFTWARE_DIR = Path(__file__).resolve().parent
+DATA_DIR = SOFTWARE_DIR / "data"
 
 # Neural Network
 class FPGA_MLP(nn.Module):
@@ -24,7 +27,7 @@ def train():
     transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5,), (0.5,))])
     
     print("Downloading MNIST dataset...")
-    train_dataset = datasets.MNIST('./data', train=True, download=True, transform=transform)
+    train_dataset = datasets.MNIST(str(DATA_DIR), train=True, download=True, transform=transform)
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=64, shuffle=True)
 
     model = FPGA_MLP()
@@ -64,7 +67,7 @@ def export_weights(model):
     # np.savetxt("fc1_weights.txt", weights_int8, fmt='%d')
     
     print("\n Saving test image")
-    test_dataset = datasets.MNIST('./data', train=False, download=True,
+    test_dataset = datasets.MNIST(str(DATA_DIR), train=False, download=True,
                                   transform=transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5,), (0.5,))]))
     
     img_tensor, label = test_dataset[0]
@@ -75,14 +78,17 @@ def export_weights(model):
     # np.savetxt("test_image.txt", img_int8, fmt='%d')
 
     def save_as_hex(filename, data):
-        with open(filename, 'w') as f:
+        output_path = SOFTWARE_DIR / filename
+        with output_path.open('w') as f:
             for val in data.flatten():
                 f.write(f'{int(val) & 0xff:02x}\n')
+
+        return output_path
     
-    save_as_hex("fc1_weights.txt", weights_int8)
-    print("Saved 'fc1_weights.txt', load this in your Verilog testbench.")
-    save_as_hex("test_image.txt", img_int8)
-    print(f"Saved 'test_image.txt', Correct label is: {label}")
+    weights_path = save_as_hex("fc1_weights.txt", weights_int8)
+    print(f"Saved '{weights_path}', load this in your Verilog testbench.")
+    image_path = save_as_hex("test_image.txt", img_int8)
+    print(f"Saved '{image_path}', Correct label is: {label}")
 
 if __name__ == "__main__":
     trained_model = train()
